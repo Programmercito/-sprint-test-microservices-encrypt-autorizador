@@ -17,7 +17,16 @@ import org.springframework.jms.support.converter.MessageType;
 @Configuration
 public class MessageConfig {
 
-    @Bean 
+    @Bean
+    public JmsListenerContainerFactory<?> jmsFactory(ConnectionFactory connectionFactory,
+            DefaultJmsListenerContainerFactoryConfigurer configurer) {
+        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setMessageConverter(jacksonJmsMessageConverter());
+        configurer.configure(factory, connectionFactory);
+        return factory;
+    }
+
+    @Bean
     public MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
